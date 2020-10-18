@@ -1,6 +1,6 @@
 import pytest
 
-from fwf_parser.parser import read_columns
+from fwf_parser.parser import read_columns, read_rows
 
 
 class TestParser:
@@ -11,8 +11,37 @@ class TestParser:
 
         return ("a aa b b  1 c  d  dd\n", offsets)
 
+    @pytest.fixture
+    def file_content_and_offsets(self):
+        return '''\
+ col1        col2 col3
+   aa       bbbbb   cc
+aa aa       cc  c    d
+  ttt          ss   zz
+    a           c    i
+kkkkk     ddd   d d  c
+''', ["5", "12", "5"]
+
     def test_read_columns_given_a_row_and_offsets_reads_columns(self,
                                                                 row_and_offsets):
         columns = read_columns(*row_and_offsets)
 
         assert list(columns) == ["a aa", " b b", "  1 c", "  d  dd"]
+
+    def test_read_rows_given_a_file_content_and_offsets_reads_all_rows(self,
+                                                                       file_content_and_offsets):
+        content, offsets = file_content_and_offsets
+        line_width = sum([int(offset) for offset in offsets])
+
+        rows = read_rows(content, line_width, offsets)
+
+        expected_rows = [
+            [" col1","        col2"," col3"],
+            ["   aa","       bbbbb","   cc"],
+            ["aa aa","       cc  c","    d"],
+            ["  ttt","          ss","   zz"],
+            ["    a","           c","    i"],
+            ["kkkkk","     ddd   d"," d  c"]
+        ]
+
+        assert [list(row) for row in rows] == expected_rows

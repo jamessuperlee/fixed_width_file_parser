@@ -7,3 +7,11 @@ def read_columns(row, offsets):
 
     if next_offsets:
         yield from read_columns(rest, next_offsets)
+
+def read_rows(content, row_width, offsets):
+    row, rest_content = content[0:row_width], content[row_width + 1:]
+
+    yield read_columns(row, offsets)
+
+    if rest_content:
+        yield from read_rows(rest_content, row_width, offsets)
