@@ -6,6 +6,14 @@ RUN             pip install -U pip
 
 COPY            requirements.txt requirements.txt
 
+FROM            base as app
+
+COPY            fwf_parser/ fwf_parser/
+COPY            setup.py setup.py
+RUN             pip install .
+
+ENTRYPOINT      ["parse"]
+
 FROM            base as test
 
 COPY            requirements_dev.txt requirements_dev.txt
