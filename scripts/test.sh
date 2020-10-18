@@ -9,7 +9,7 @@ tag="fwf_parser-test"
 dockerRun="docker run $dockerOptions -t $tag"
 
 echo "Building the image..."
-if ! docker build -f Dockerfile -t $tag .; then
+if ! docker build --target test -f Dockerfile -t $tag .; then
     die "Failed to build the image"
 fi
 
