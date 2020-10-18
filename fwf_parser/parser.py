@@ -1,3 +1,5 @@
+from fwf_parser.row_width_mismatch_error import RowWidthMismatchError
+
 
 def read_columns(row, offsets):
     offset, *next_offsets = offsets
@@ -10,6 +12,9 @@ def read_columns(row, offsets):
 
 def read_rows(content, row_width, offsets):
     row, rest_content = content[0:row_width], content[row_width + 1:]
+
+    if len(row) != row_width:
+        raise RowWidthMismatchError('Row width does not match with spec offset!')
 
     yield read_columns(row, offsets)
 

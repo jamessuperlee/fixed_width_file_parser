@@ -1,0 +1,3 @@
+
+class RowWidthMismatchError(Exception):
+    pass
