@@ -6,6 +6,20 @@ import pytest
 
 from fwf_parser.parser import run
 
+def generate_input_and_spec(content_and_spec):
+    content, spec = content_and_spec
+
+    spec_filepath = './test-spec.json'
+    with open(spec_filepath, 'w') as jsonfile:
+        json.dump(spec, jsonfile)
+
+    input_filepath = './test-fixed-width-file.txt'
+    with open(input_filepath, 'w', encoding=spec['FixedWidthEncoding']) as file:
+        file.write(content)
+
+    return input_filepath, spec_filepath
+
+
 class TestParser:
 
     @pytest.fixture
@@ -34,16 +48,10 @@ aa aa       cc  c    d
         return content, spec
 
     @pytest.fixture
-    def file_with_simple_characters_and_spec_file(self, content_with_simple_characters_and_spec):
-        content, spec = content_with_simple_characters_and_spec
-
-        spec_filepath = './test-spec.json'
-        with open(spec_filepath, 'w') as jsonfile:
-            json.dump(spec, jsonfile)
-
-        input_filepath = './test-fixed-width-file.txt'
-        with open(input_filepath, 'w', encoding=spec['FixedWidthEncoding']) as file:
-            file.write(content)
+    def file_with_simple_characters_and_spec_file(self,
+                                                  content_with_simple_characters_and_spec):
+        input_filepath, spec_filepath = \
+            generate_input_and_spec(content_with_simple_characters_and_spec)
 
         yield input_filepath, spec_filepath
 
@@ -74,7 +82,8 @@ aa aa       cc  c    d
 
         def generate_bytes_chars(row_characters, offsets):
             offset, *rest_offsets = offsets
-            column_characters, rest_characters = row_characters[:int(offset)], row_characters[int(offset):]
+            column_characters, rest_characters = \
+                row_characters[:int(offset)], row_characters[int(offset):]
             yield ''.join(column_characters)
 
             if rest_characters:
@@ -98,7 +107,8 @@ aa aa       cc  c    d
 
         expected_rows, rows = zip(*[
             (list(row_characters), content)
-            for row_characters, content in generate_content(all_possible_charaters, spec['Offsets'])])
+            for row_characters, content in generate_content(all_possible_charaters, spec['Offsets'])
+        ])
 
         header = ["         a", "    b", "    c", "    d"]
 
@@ -110,13 +120,7 @@ aa aa       cc  c    d
     def file_with_all_characters_and_spec_file(self, all_characters_content_and_spec_and_expected_rows):
         content, spec, expected_rows = all_characters_content_and_spec_and_expected_rows
 
-        spec_filepath = './test-spec.json'
-        with open(spec_filepath, 'w') as jsonfile:
-            json.dump(spec, jsonfile)
-
-        input_filepath = './test-fixed-width-file.txt'
-        with open(input_filepath, 'w', encoding=spec['FixedWidthEncoding']) as file:
-            file.write(content)
+        input_filepath, spec_filepath = generate_input_and_spec((content, spec))
 
         yield input_filepath, spec_filepath, expected_rows
 

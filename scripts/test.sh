@@ -20,7 +20,7 @@ if ! $dockerRun pylint fwf_parser tests; then
 fi
 
 echo "Running the tests..."
-if ! $dockerRun pytest --cov fwf_parser; then
+if ! $dockerRun pytest -v --cov fwf_parser; then
 
     die "Failed tests"
 fi
