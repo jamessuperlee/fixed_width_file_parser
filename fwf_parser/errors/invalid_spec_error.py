@@ -1,0 +1,3 @@
+
+class InvalidSpecError(Exception):
+    pass

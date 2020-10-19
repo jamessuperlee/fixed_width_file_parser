@@ -88,8 +88,10 @@ aa aa       cc  c    d
             if rest:
                 yield from generate_content(rest, offsets)
 
-        # windows-1252 encoding is single byte character. The range is from 0x00 - 0xFF.
-        # It does not support 5 codes - 0x81, 0x8d, 0x8f, 0x90, 0x9d
+        # windows-1252 encoding is single byte character.
+        # The range of characters is from 0x00 to 0xFF.
+        # But windows-1252 encoding does not support 5 codes - 0x81, 0x8d, 0x8f, 0x90, 0x9d
+        # NUL(0x00) is excluded because csv reader cannot read it.
         all_possible_charaters = [
             bytes([i]).decode('windows-1252')
             for i in range(256)[1:] if not i in [129, 141, 143, 144, 157]]

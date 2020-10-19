@@ -1,7 +1,7 @@
 import pytest
 
 from fwf_parser.parser import read_columns, read_rows
-from fwf_parser.row_width_mismatch_error import RowWidthMismatchError
+from fwf_parser.errors.row_width_mismatch_error import RowWidthMismatchError
 
 
 class TestParser:
