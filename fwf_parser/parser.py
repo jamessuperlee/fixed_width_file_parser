@@ -1,7 +1,7 @@
-import csv
 
 from fwf_parser.errors.row_width_mismatch_error import RowWidthMismatchError
 from fwf_parser.reader import read_spec, read_content
+from fwf_parser.writer import write_csv
 
 
 def read_columns(row, offsets):
@@ -26,11 +26,9 @@ def read_rows(content, row_width, offsets):
 
 def run(input_file, spec_file):
     spec = read_spec(spec_file)
-
     content = read_content(input_file, spec['input_encoding'])
 
-    output_file = input_file.replace('.txt', '.csv')
-
-    with open(output_file, 'w', encoding=spec['output_encoding'], newline='') as csvfile:
-        csvwriter = csv.writer(csvfile)
-        csvwriter.writerows(read_rows(content, spec['line_width'], spec['offsets']))
+    write_csv(
+        read_rows(content, spec['line_width'], spec['offsets']),
+        input_file.replace('.txt', '.csv'),
+        spec['output_encoding'])
