@@ -11,7 +11,7 @@ def read_spec(spec_file):
 
         if not set(REQUIRED_SPECS).issubset(set(spec)):
             raise InvalidSpecError('Spec requires `Offsets`, `FixedWidthEncoding` and `DelimitedEncoding`!')
-        
+
         offsets = [int(offset) for offset in spec['Offsets']]
         return {
             "input_encoding": spec['FixedWidthEncoding'],
@@ -19,3 +19,8 @@ def read_spec(spec_file):
             "line_width": sum(offsets),
             "output_encoding": spec['DelimitedEncoding']
         }
+
+def read_content(input_file, encoding):
+
+    with open(input_file, 'r', newline="", encoding=encoding) as file:
+        return file.read()

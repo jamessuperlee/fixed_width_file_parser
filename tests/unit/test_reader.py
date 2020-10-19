@@ -3,7 +3,7 @@ from unittest.mock import patch, mock_open
 
 import pytest
 
-from fwf_parser.reader import read_spec
+from fwf_parser.reader import read_spec, read_content
 from fwf_parser.errors.invalid_spec_error import InvalidSpecError
 
 
@@ -35,6 +35,12 @@ class TestReader:
             "DelimitedEncoding": "utf-8"
         }
 
+    @pytest.fixture
+    def content(self):
+        return '''\
+col1 col2 col5
+   a    b    c
+'''
 
     def test_read_spec_given_valid_spec_return_spec_dict(self, spec):
         with patch('builtins.open', mock_open(read_data=json.dumps(spec))) as mock_file:
@@ -59,3 +65,10 @@ class TestReader:
                 InvalidSpecError,
                 match="Spec requires `Offsets`, `FixedWidthEncoding` and `DelimitedEncoding`!"):
                 read_spec(spec_file)
+
+    def test_read_input_file_given_valid_input_file_returns_content(self, content):
+        with patch('builtins.open', mock_open(read_data=content)) as mock_file:
+            input_file = "./fwf.txt"
+
+            assert read_content(input_file, 'windows-1252') == content
+            mock_file.assert_called_with(input_file, 'r', newline="", encoding='windows-1252')
