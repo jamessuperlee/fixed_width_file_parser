@@ -1,3 +1,0 @@
-
-class InvalidSpecError(Exception):
-    pass

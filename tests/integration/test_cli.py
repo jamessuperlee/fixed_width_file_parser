@@ -30,9 +30,7 @@ class TestCli:
 '''
         spec = {
             "ColumnNames": [
-                "col1",
-                "col2",
-                "col3"
+                "f1"
             ],
             "Offsets": [
                 "17"

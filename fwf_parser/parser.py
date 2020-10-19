@@ -4,7 +4,7 @@ from fwf_parser.errors.row_width_mismatch_error import RowWidthMismatchError
 
 def read_columns(row, offsets):
     offset, *next_offsets = offsets
-    column, rest = row[0:int(offset)], row[int(offset):]
+    column, rest = row[0:offset], row[offset:]
 
     yield column
 

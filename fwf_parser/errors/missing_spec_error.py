@@ -1,0 +1,3 @@
+
+class MissingSpecError(Exception):
+    pass
