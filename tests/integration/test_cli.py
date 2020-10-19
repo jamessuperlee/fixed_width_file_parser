@@ -4,7 +4,7 @@ import os
 
 import pytest
 
-from fwf_parser.parser import run
+from fwf_parser.cli import run
 
 def generate_input_and_spec(content_and_spec):
     content, spec = content_and_spec
@@ -20,7 +20,40 @@ def generate_input_and_spec(content_and_spec):
     return input_filepath, spec_filepath
 
 
-class TestParser:
+class TestCli:
+
+    @pytest.fixture
+    def content_with_single_column_and_spec(self):
+        content = '''\
+               f1
+    ss   ss   ss 
+'''
+        spec = {
+            "ColumnNames": [
+                "col1",
+                "col2",
+                "col3"
+            ],
+            "Offsets": [
+                "17"
+            ],
+            "FixedWidthEncoding": "windows-1252",
+            "IncludeHeader": "True",
+            "DelimitedEncoding": "utf-8"
+        }
+        return content, spec
+
+    @pytest.fixture
+    def file_with_single_column_and_spec_file(self,
+                                              content_with_single_column_and_spec):
+        input_filepath, spec_filepath = \
+            generate_input_and_spec(content_with_single_column_and_spec)
+
+        yield input_filepath, spec_filepath
+
+        os.remove(input_filepath)
+        os.remove(input_filepath.replace('.txt', '.csv'))
+        os.remove(spec_filepath)
 
     @pytest.fixture
     def content_with_simple_characters_and_spec(self):
@@ -129,7 +162,24 @@ aa aa       cc  c    d
         os.remove(spec_filepath)
 
 
-    def test_run_given_a_fixed_width_file_and_spec_file_generates_a_csv_file(self,
+    def test_run_given_a_file_with_single_column_and_spec_file_generates_a_csv_file(self,
+                                                                               file_with_single_column_and_spec_file):
+        input_file, spec_file = file_with_single_column_and_spec_file
+
+        run(input_file, spec_file)
+
+        with open(input_file.replace('.txt', '.csv'), 'r', newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            rows = list(reader)
+
+        expected_content = [
+            ["               f1"],
+            ["    ss   ss   ss "]
+        ]
+
+        assert rows == expected_content
+
+    def test_run_given_a_file_with_simple_content_and_spec_file_generates_a_csv_file(self,
                                                                              file_with_simple_characters_and_spec_file):
         input_file, spec_file = file_with_simple_characters_and_spec_file
 
