@@ -8,6 +8,19 @@ This is an application which enables for a user to generate a csv file by parsin
 * test framework - pytest
 
 
+## Assumption
+
+* The application will take a input fixed width file and a spec file.
+* A spec file includes ColumnNames, Offsets, FixedWidthEncoding, IncludeHeader and DelimitedEncoding.
+* The application will read a input fixed width file with FixedWidthEncoding.
+* The application will parse each column values with Offsets.
+    - Each line of fixed width file always ends with newline character.
+    - The length of each line excluding last newline character should match with total of offests in spec.
+* The application will write a output file with DelimitedEncoding.
+    - The output file is a csv file which has `,` delimiter and `"` escapechar.
+    - It does not strip any character such as space in column values.
+
+
 ## How to run lint and test
 
 ```bash
@@ -26,9 +39,4 @@ After you successfully run this tool, you can see a output csv file in ./sample_
     2. Use the path of test file for input-file and spec-file.
 
 
-## Assumption
 
-* Each line of fixed width file always ends with newline character.
-* The length of each line excluding last newline character should match with total of offests in spec.
-* The output file is a csv file which has `,` delimiter and `"` escapechar.
-* This tool does not strip any character in fields when a csv file is generated.
