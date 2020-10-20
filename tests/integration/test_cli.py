@@ -101,10 +101,10 @@ aa aa       cc  c    d
                 "d"
             ],
             "Offsets": [
-                "10",
-                "5",
-                "5",
-                "5"
+                "12",
+                "6",
+                "7",
+                "7"
             ],
             "FixedWidthEncoding": "windows-1252",
             "IncludeHeader": "True",
@@ -122,8 +122,12 @@ aa aa       cc  c    d
 
         def generate_content(charaters, offsets):
             row_characters, rest = charaters[:25], charaters[25:]
+            row_string_with_space_padding = f'''\
+  {''.join(row_characters[:10])} {''.join(row_characters[10:15])}  {''.join(row_characters[15:20])}  {''.join(row_characters[20:25])}\
+'''
 
-            yield generate_bytes_chars(row_characters, offsets), ''.join(row_characters)
+            stripped_padding_offsets = [10, 5, 5, 5]
+            yield generate_bytes_chars(row_characters, stripped_padding_offsets), row_string_with_space_padding
 
             if rest:
                 yield from generate_content(rest, offsets)
@@ -141,11 +145,11 @@ aa aa       cc  c    d
             for row_characters, content in generate_content(all_possible_charaters, spec['Offsets'])
         ])
 
-        header = ["         a", "    b", "    c", "    d"]
+        header = ["           a", "     b", "      c", "      d"]
 
         content = '\n'.join([''.join(header), *rows])
 
-        return content, spec, [header, *expected_rows]
+        return content, spec, [["a", "b", "c", "d"], *expected_rows]
 
     @pytest.fixture
     def file_with_all_characters_and_spec_file(self, all_characters_content_and_spec_and_expected_rows):
@@ -171,8 +175,8 @@ aa aa       cc  c    d
             rows = list(reader)
 
         expected_content = [
-            ["               f1"],
-            ["    ss   ss   ss "]
+            ["f1"],
+            ["ss   ss   ss "]
         ]
 
         assert rows == expected_content
@@ -188,14 +192,13 @@ aa aa       cc  c    d
             rows = list(reader)
 
         expected_content = [
-            [" col1", "        col2", " col3"],
-            ["   aa", "       bbbbb", "   cc"],
-            ["aa aa", "       cc  c", "    d"],
-            ["  ttt", "          ss", "   zz"]
+            ["col1", "col2", "col3"],
+            ["aa", "bbbbb", "cc"],
+            ["aa aa", "cc  c", "d"],
+            ["ttt", "ss", "zz"]
         ]
 
         assert rows == expected_content
-
 
     def test_run_given_a_file_with_all_characters_generates_a_valid_csv(self,
                                                                         file_with_all_characters_and_spec_file):

@@ -12,13 +12,14 @@ This is an application which enables for a user to generate a csv file by parsin
 
 * The application will take a input fixed width file and a spec file.
 * A spec file includes ColumnNames, Offsets, FixedWidthEncoding, IncludeHeader and DelimitedEncoding.
+* Each column value has left padding with space character.
 * The application will read a input fixed width file with FixedWidthEncoding.
 * The application will parse each column values with Offsets.
     - Each line of fixed width file always ends with newline character.
     - The length of each line excluding last newline character should match with total of offests in spec.
+    - It will strip only space padding characters on left side of column
 * The application will write a output file with DelimitedEncoding.
     - The output file is a csv file which has `,` delimiter and `"` escapechar.
-    - It does not strip any character such as space in column values.
 
 
 ## How to run lint and test

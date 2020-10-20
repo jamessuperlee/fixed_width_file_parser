@@ -2,11 +2,20 @@
 from fwf_parser.errors.row_width_mismatch_error import RowWidthMismatchError
 
 
+def strip_padding(chars):
+    char, next_chars = chars[:1], chars[1:]
+
+    if char != ' ':
+        return chars
+
+    return strip_padding(next_chars)
+
+
 def read_columns(row, offsets):
     offset, *next_offsets = offsets
     column, rest = row[0:offset], row[offset:]
 
-    yield column
+    yield strip_padding(column)
 
     if next_offsets:
         yield from read_columns(rest, next_offsets)
