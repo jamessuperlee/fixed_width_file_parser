@@ -24,3 +24,9 @@ if ! $dockerRun pytest -v --cov fwf_parser; then
 
     die "Failed tests"
 fi
+
+echo "Running the type checker..."
+if ! $dockerRun mypy fwf_parser tests; then
+
+    die "Failed type checking"
+fi

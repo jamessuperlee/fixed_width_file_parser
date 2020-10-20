@@ -3,9 +3,10 @@ from unittest.mock import patch, mock_open
 
 import pytest
 
-from fwf_parser.reader import read_spec, read_content
-from fwf_parser.errors.missing_spec_error import MissingSpecError
 from fwf_parser.errors.mismatch_columns_and_offsets_error import MismatchColumnsAndOffsetsError
+from fwf_parser.errors.missing_spec_error import MissingSpecError
+from fwf_parser.reader import read_spec, read_content
+from fwf_parser.spec import Spec
 
 
 class TestReader:
@@ -63,12 +64,7 @@ col1 col2 col5
         with patch('builtins.open', mock_open(read_data=json.dumps(spec))) as mock_file:
             spec_file = "./spec.json"
 
-            expected_spec = {
-                "input_encoding": "windows-1252",
-                "offsets": [3, 5],
-                "line_width": 8,
-                "output_encoding": "utf-8"
-            }
+            expected_spec = Spec("windows-1252", [3, 5], 8, "utf-8")
 
             assert read_spec(spec_file) == expected_spec
             mock_file.assert_called_with(spec_file, 'r')

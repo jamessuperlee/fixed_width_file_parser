@@ -1,8 +1,9 @@
+from typing import Generator, List
 
 from fwf_parser.errors.row_width_mismatch_error import RowWidthMismatchError
 
 
-def strip_padding(chars):
+def strip_padding(chars: str) -> str:
     char, next_chars = chars[:1], chars[1:]
 
     if char != ' ':
@@ -11,7 +12,7 @@ def strip_padding(chars):
     return strip_padding(next_chars)
 
 
-def read_columns(row, offsets):
+def read_columns(row: str, offsets: List[int]) -> Generator[str, None, None]:
     offset, *next_offsets = offsets
     column, rest = row[0:offset], row[offset:]
 
@@ -20,7 +21,7 @@ def read_columns(row, offsets):
     if next_offsets:
         yield from read_columns(rest, next_offsets)
 
-def read_rows(content, row_width, offsets):
+def read_rows(content: str, row_width: int, offsets: List[int]) -> Generator[Generator[str, None, None], None, None]:
     row, rest_content = content[0:row_width], content[row_width + 1:]
 
     if len(row) != row_width:
